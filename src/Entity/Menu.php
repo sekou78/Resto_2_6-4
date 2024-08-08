@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MenuRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,6 +36,17 @@ class Menu
 
     #[ORM\ManyToOne(inversedBy: 'menus')]
     private ?Restaurant $restaurant = null;
+
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'menus')]
+    private Collection $category;
+
+    public function __construct()
+    {
+        $this->category = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -120,6 +133,30 @@ class Menu
     public function setRestaurant(?Restaurant $restaurant): static
     {
         $this->restaurant = $restaurant;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategory(): Collection
+    {
+        return $this->category;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->category->contains($category)) {
+            $this->category->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        $this->category->removeElement($category);
 
         return $this;
     }
