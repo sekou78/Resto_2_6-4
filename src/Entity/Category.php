@@ -34,9 +34,16 @@ class Category
     #[ORM\ManyToMany(targetEntity: Menu::class, mappedBy: 'category')]
     private Collection $menus;
 
+    /**
+     * @var Collection<int, Food>
+     */
+    #[ORM\ManyToMany(targetEntity: Food::class, mappedBy: 'category')]
+    private Collection $food;
+
     public function __construct()
     {
         $this->menus = new ArrayCollection();
+        $this->food = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -114,6 +121,33 @@ class Category
     {
         if ($this->menus->removeElement($menu)) {
             $menu->removeCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Food>
+     */
+    public function getFood(): Collection
+    {
+        return $this->food;
+    }
+
+    public function addFood(Food $food): static
+    {
+        if (!$this->food->contains($food)) {
+            $this->food->add($food);
+            $food->addCategory($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFood(Food $food): static
+    {
+        if ($this->food->removeElement($food)) {
+            $food->removeCategory($this);
         }
 
         return $this;
