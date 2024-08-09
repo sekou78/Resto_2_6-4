@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Menu;
-use App\Form\MenuType;
 use App\Repository\MenuRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

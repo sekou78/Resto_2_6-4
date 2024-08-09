@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Picture;
-use App\Form\PictureType;
 use App\Repository\PictureRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Restaurant;
-use App\Form\RestaurantType;
 use App\Repository\RestaurantRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
