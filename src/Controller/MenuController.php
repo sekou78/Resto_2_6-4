@@ -5,77 +5,97 @@ namespace App\Controller;
 use App\Entity\Menu;
 use App\Form\MenuType;
 use App\Repository\MenuRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/menu')]
+#[Route('menu', name: 'menu_')]
 class MenuController extends AbstractController
 {
-    #[Route('/', name: 'app_menu_index', methods: ['GET'])]
-    public function index(MenuRepository $menuRepository): Response
+
+    public function __construct(
+        private EntityManagerInterface $manager,
+        private MenuRepository $repository,
+        private SerializerInterface $serializer,
+        private UrlGeneratorInterface $urlGenerator
+    )
     {
-        return $this->render('menu/index.html.twig', [
-            'menus' => $menuRepository->findAll(),
-        ]);
+        
     }
 
-    #[Route('/new', name: 'app_menu_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route(name: 'new', methods: 'POST')]
+    public function new(Request $request): JsonResponse
     {
-        $menu = new Menu();
-        $form = $this->createForm(MenuType::class, $menu);
-        $form->handleRequest($request);
+        $menu = $this->serializer->deserialize($request->getContent(), Menu::class, 'json');
+        $menu->setCreatedAt(new DateTimeImmutable());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($menu);
-            $entityManager->flush();
+        $this->manager->persist($menu);
+        $this->manager->flush();
 
-            return $this->redirectToRoute('app_menu_index', [], Response::HTTP_SEE_OTHER);
+        $responseData = $this->serializer->serialize($menu, 'json');
+        $location = $this->urlGenerator->generate(
+            'menu_show',
+            ['id' => $menu->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
+
+    }
+
+    #[Route('/{id}', name: 'show', methods: 'GET')]
+    public function show(int $id): JsonResponse
+    {
+        $menu = $this->repository->findOneBy(['id' => $id]);
+        if ($menu) {
+            $responseData = $this->serializer->serialize($menu, 'json');
+
+            return new JsonResponse($responseData, Response::HTTP_OK, [], true);
         }
 
-        return $this->render('menu/new.html.twig', [
-            'menu' => $menu,
-            'form' => $form,
-        ]);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'app_menu_show', methods: ['GET'])]
-    public function show(Menu $menu): Response
+    #[Route('/{id}', name: 'edit', methods: 'PUT')]
+    public function edit(int $id, Request $request): JsonResponse
     {
-        return $this->render('menu/show.html.twig', [
-            'menu' => $menu,
-        ]);
-    }
+        $menu = $this->repository->findOneBy(['id' => $id]);
+        if ($menu) {
+            $menu = $this->serializer->deserialize(
+                $request->getContent(),
+                Menu::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $menu]
+            );
 
-    #[Route('/{id}/edit', name: 'app_menu_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Menu $menu, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(MenuType::class, $menu);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_menu_index', [], Response::HTTP_SEE_OTHER);
+            $menu->setUpdatedAt(new DateTimeImmutable());
+    
+            $this->manager->flush();
+    
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->render('menu/edit.html.twig', [
-            'menu' => $menu,
-            'form' => $form,
-        ]);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'app_menu_delete', methods: ['POST'])]
-    public function delete(Request $request, Menu $menu, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'delete', methods: 'DELETE')]
+    public function delete(int $id): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete'.$menu->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($menu);
-            $entityManager->flush();
+        $menu = $this->repository->findOneBy(['id' => $id]);
+        if ($menu) {
+            $this->manager->remove($menu);
+            $this->manager->flush();
+
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->redirectToRoute('app_menu_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 }
