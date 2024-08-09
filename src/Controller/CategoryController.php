@@ -5,77 +5,97 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/category')]
+#[Route('category', name: 'category_')]
 class CategoryController extends AbstractController
 {
-    #[Route('/', name: 'app_category_index', methods: ['GET'])]
-    public function index(CategoryRepository $categoryRepository): Response
+
+    public function __construct(
+        private EntityManagerInterface $manager,
+        private CategoryRepository $repository,
+        private SerializerInterface $serializer,
+        private UrlGeneratorInterface $urlGenerator
+    )
     {
-        return $this->render('category/index.html.twig', [
-            'categories' => $categoryRepository->findAll(),
-        ]);
+        
     }
 
-    #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route(name: 'new', methods: 'POST')]
+    public function new(Request $request): JsonResponse
     {
-        $category = new Category();
-        $form = $this->createForm(CategoryType::class, $category);
-        $form->handleRequest($request);
+        $category = $this->serializer->deserialize($request->getContent(), Category::class, 'json');
+        $category->setCreatedAt(new DateTimeImmutable());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($category);
-            $entityManager->flush();
+        $this->manager->persist($category);
+        $this->manager->flush();
 
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+        $responseData = $this->serializer->serialize($category, 'json');
+        $location = $this->urlGenerator->generate(
+            'category_show',
+            ['id' => $category->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
+
+    }
+
+    #[Route('/{id}', name: 'show', methods: 'GET')]
+    public function show(int $id): JsonResponse
+    {
+        $category = $this->repository->findOneBy(['id' => $id]);
+        if ($category) {
+            $responseData = $this->serializer->serialize($category, 'json');
+
+            return new JsonResponse($responseData, Response::HTTP_OK, [], true);
         }
 
-        return $this->render('category/new.html.twig', [
-            'category' => $category,
-            'form' => $form,
-        ]);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
-    public function show(Category $category): Response
+    #[Route('/{id}', name: 'edit', methods: 'PUT')]
+    public function edit(int $id, Request $request): JsonResponse
     {
-        return $this->render('category/show.html.twig', [
-            'category' => $category,
-        ]);
-    }
+        $category = $this->repository->findOneBy(['id' => $id]);
+        if ($category) {
+            $category = $this->serializer->deserialize(
+                $request->getContent(),
+                Category::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $category]
+            );
 
-    #[Route('/{id}/edit', name: 'app_category_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(CategoryType::class, $category);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            $category->setUpdatedAt(new DateTimeImmutable());
+    
+            $this->manager->flush();
+    
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->render('category/edit.html.twig', [
-            'category' => $category,
-            'form' => $form,
-        ]);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
-    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'delete', methods: 'DELETE')]
+    public function delete(int $id): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($category);
-            $entityManager->flush();
+        $category = $this->repository->findOneBy(['id' => $id]);
+        if ($category) {
+            $this->manager->remove($category);
+            $this->manager->flush();
+
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 }
