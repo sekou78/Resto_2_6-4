@@ -5,77 +5,97 @@ namespace App\Controller;
 use App\Entity\Booking;
 use App\Form\BookingType;
 use App\Repository\BookingRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/booking')]
+#[Route('booking', name: 'booking_')]
 class BookingController extends AbstractController
 {
-    #[Route('/', name: 'app_booking_index', methods: ['GET'])]
-    public function index(BookingRepository $bookingRepository): Response
+
+    public function __construct(
+        private EntityManagerInterface $manager,
+        private BookingRepository $repository,
+        private SerializerInterface $serializer,
+        private UrlGeneratorInterface $urlGenerator
+    )
     {
-        return $this->render('booking/index.html.twig', [
-            'bookings' => $bookingRepository->findAll(),
-        ]);
+        
     }
 
-    #[Route('/new', name: 'app_booking_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route(name: 'new', methods: 'POST')]
+    public function new(Request $request): JsonResponse
     {
-        $booking = new Booking();
-        $form = $this->createForm(BookingType::class, $booking);
-        $form->handleRequest($request);
+        $booking = $this->serializer->deserialize($request->getContent(), Booking::class, 'json');
+        $booking->setCreatedAt(new DateTimeImmutable());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($booking);
-            $entityManager->flush();
+        $this->manager->persist($booking);
+        $this->manager->flush();
 
-            return $this->redirectToRoute('app_booking_index', [], Response::HTTP_SEE_OTHER);
+        $responseData = $this->serializer->serialize($booking, 'json');
+        $location = $this->urlGenerator->generate(
+            'booking_show',
+            ['id' => $booking->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
+
+    }
+
+    #[Route('/{id}', name: 'show', methods: 'GET')]
+    public function show(int $id): JsonResponse
+    {
+        $booking = $this->repository->findOneBy(['id' => $id]);
+        if ($booking) {
+            $responseData = $this->serializer->serialize($booking, 'json');
+
+            return new JsonResponse($responseData, Response::HTTP_OK, [], true);
         }
 
-        return $this->render('booking/new.html.twig', [
-            'booking' => $booking,
-            'form' => $form,
-        ]);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'app_booking_show', methods: ['GET'])]
-    public function show(Booking $booking): Response
+    #[Route('/{id}', name: 'edit', methods: 'PUT')]
+    public function edit(int $id, Request $request): JsonResponse
     {
-        return $this->render('booking/show.html.twig', [
-            'booking' => $booking,
-        ]);
-    }
+        $booking = $this->repository->findOneBy(['id' => $id]);
+        if ($booking) {
+            $booking = $this->serializer->deserialize(
+                $request->getContent(),
+                Booking::class,
+                'json',
+                [AbstractNormalizer::OBJECT_TO_POPULATE => $booking]
+            );
 
-    #[Route('/{id}/edit', name: 'app_booking_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(BookingType::class, $booking);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_booking_index', [], Response::HTTP_SEE_OTHER);
+            $booking->setUpdatedAt(new DateTimeImmutable());
+    
+            $this->manager->flush();
+    
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->render('booking/edit.html.twig', [
-            'booking' => $booking,
-            'form' => $form,
-        ]);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
-    #[Route('/{id}', name: 'app_booking_delete', methods: ['POST'])]
-    public function delete(Request $request, Booking $booking, EntityManagerInterface $entityManager): Response
+    #[Route('/{id}', name: 'delete', methods: 'DELETE')]
+    public function delete(int $id): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete'.$booking->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($booking);
-            $entityManager->flush();
+        $booking = $this->repository->findOneBy(['id' => $id]);
+        if ($booking) {
+            $this->manager->remove($booking);
+            $this->manager->flush();
+
+            return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
 
-        return $this->redirectToRoute('app_booking_index', [], Response::HTTP_SEE_OTHER);
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 }
