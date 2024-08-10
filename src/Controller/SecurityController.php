@@ -223,6 +223,61 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/account/me', name: 'me', methods: 'GET')]
+    #[OA\Get(
+        path: "/api/account/me",
+        summary: "Récupérer toutes les informations de l'objet User",
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Récupérer toutes les informations de l'objet User",
+                content: new OA\MediaType(
+                    mediaType: "application/json",
+                    schema: new OA\Schema(
+                        type: "object",
+                        properties: [
+                            new OA\Property(
+                                property: "user",
+                                type: "string",
+                                example:"adresse de connexion"
+                            ),
+                            new OA\Property(
+                                property: "apiToken",
+                                type: "string",
+                                example: "31a023e212f"
+                            ),
+                            new OA\Property(
+                                property: "roles",
+                                type: "array",
+                                items: new OA\Items(
+                                    type: "string",
+                                    example: "ROLE_USER")
+                            ),
+                            new OA\Property(
+                                property: "firstname",
+                                type: "string",
+                                example: "Fath"
+                            ),
+                            new OA\Property(
+                                property: "lastname",
+                                type: "string",
+                                example: "Dinga"
+                            ),
+                            new OA\Property(
+                                property: "guestNumber",
+                                type: "smallint",
+                                example: "20"
+                            ),
+                            new OA\Property(
+                                property: "allergy",
+                                type: "string",
+                                example: "cacahuètes"
+                            )
+                        ]
+                    )
+                )
+            )
+        ]
+    )]
     public function me(): JsonResponse
     {
         $user = $this->getUser();
@@ -233,6 +288,77 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/account/edit', name: 'edit', methods: 'PUT')]
+    #[OA\Put(
+        path: "/api/account/edit",
+        summary: "Modifier son compte utilisateur avec l'un ou tous les champs",
+        requestBody: new OA\RequestBody(
+            required: true,
+            description: "Nouvelles données éventuelles de l'utilisateur à mettre à jour",
+            content: new OA\MediaType(
+                mediaType: "application/json",
+                schema: new OA\Schema(
+                    type: "object",
+                    required: ["firstname", "lastname", "guestNumber", "allergy"],
+                    properties: [
+                        new OA\Property(
+                            property: "firstname",
+                            type: "string",
+                            example: "Fath"
+                        ),
+                        new OA\Property(
+                            property: "lastname",
+                            type: "string",
+                            example: "Dinga"
+                        ),
+                        new OA\Property(
+                            property: "guestNumber",
+                            type: "smallint",
+                            example: "20"
+                        ),
+                        new OA\Property(
+                            property: "allergy",
+                            type: "string",
+                            example: "cacahuètes"
+                        )
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 204,
+                description: "Utilisateur modifié avec succès",
+                content: new OA\MediaType(
+                    mediaType: "application/json",
+                    schema: new OA\Schema(
+                        type: "object",
+                        properties: [
+                            new OA\Property(
+                                property: "firstname",
+                                type: "string",
+                                example: "Fath"
+                            ),
+                            new OA\Property(
+                                property: "lastname",
+                                type: "string",
+                                example: "Dinga"
+                            ),
+                            new OA\Property(
+                                property: "guestNumber",
+                                type: "smallint",
+                                example: "20"
+                            ),
+                            new OA\Property(
+                                property: "allergy",
+                                type: "string",
+                                example: "cacahuètes"
+                            )
+                        ]
+                    )
+                )
+            )
+        ]
+    )]
     public function edit(Request $request): JsonResponse
     {
         $user = $this->serializer->deserialize(
