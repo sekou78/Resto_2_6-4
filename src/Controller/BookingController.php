@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('booking', name: 'booking_')]
+#[Route('api/booking', name: 'app_api_booking_')]
 class BookingController extends AbstractController
 {
 

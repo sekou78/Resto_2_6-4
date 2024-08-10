@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('category', name: 'category_')]
+#[Route('api/category', name: 'app_api_category_')]
 class CategoryController extends AbstractController
 {
 

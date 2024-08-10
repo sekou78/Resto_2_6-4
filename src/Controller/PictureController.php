@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('picture', name: 'picture_')]
+#[Route('api/picture', name: 'app_api_picture_')]
 class PictureController extends AbstractController
 {
 

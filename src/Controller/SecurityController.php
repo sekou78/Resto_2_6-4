@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
+#[Route('/api', name: 'app_api_')]
 class SecurityController extends AbstractController
 {
     public function __construct(
