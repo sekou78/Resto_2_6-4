@@ -38,6 +38,9 @@ class Booking
     #[ORM\ManyToOne(inversedBy: 'bookings')]
     private ?Restaurant $restaurant = null;
 
+    #[ORM\ManyToOne(inversedBy: 'bookings')]
+    private ?User $Client = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,18 @@ class Booking
     public function setRestaurant(?Restaurant $restaurant): static
     {
         $this->restaurant = $restaurant;
+
+        return $this;
+    }
+
+    public function getClient(): ?User
+    {
+        return $this->Client;
+    }
+
+    public function setClient(?User $Client): static
+    {
+        $this->Client = $Client;
 
         return $this;
     }
