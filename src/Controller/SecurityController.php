@@ -89,22 +89,16 @@ class SecurityController extends AbstractController
                         type: "object",
                         properties: [
                             new OA\Property(
-                                property: "user",
+                                property: "email",
                                 type: "string",
-                                example: "Mail de connexion"
+                                format: "email",
+                                example: "adresse@mail.com"
                             ),
                             new OA\Property(
-                                property: "apiToken",
+                                property: "password",
                                 type: "string",
-                                example: "31a023e212f1"
-                            ),
-                            new OA\Property(
-                                property: "roles",
-                                type: "array",
-                                items: new OA\Items(
-                                    type: "string",
-                                    example: "ROLE_USER"
-                                )
+                                format: "password",
+                                example: "mot de passe"
                             ),
                             new OA\Property(
                                 property: "firstname",
