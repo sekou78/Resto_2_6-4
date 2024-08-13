@@ -7,15 +7,36 @@ use PHPUnit\Framework\TestCase;
 
 class PictureTest extends TestCase
 {
-    public function provideFirstName(): \Generator
+    // public function provideTestTiltePicture(): \Generator
+    // {
+    //     yield ["Title Picture"];
+    // }
+    // /** @dataProvider provideTestTiltePicture */
+    // public function testPictureTitle(string $title): void
+    // {
+    //     $picture = new Picture;
+    //     $picture->setTitle($title);
+    //     $this->assertSame($title, $picture->getTitle());
+    // }
+
+    public function providePictureSlug(): \Generator
     {
+        yield ["Title Picture"];
         yield ['The Best slug'];
     }
-    /** @dataProvider provideFirstName */
-    public function testFirstNameSetter(string $name): void
+    /** @dataProvider providePictureSlug */
+
+    public function testprovidePictureSlugGetter(string $slug): void
     {
         $picture = new Picture;
-        $picture->setTitle($name);
-        $this->assertSame($name, $picture->getTitle());
+        $picture->setSlug($slug);
+        $this->assertSame($slug, $picture->getSlug());
     }
+
+    // public function testAnException(): void
+    // {
+    //     $this->expectException(\TypeError::class);
+    //     $picture = new Picture();
+    //     $picture->setSlug(10);
+    // }
 }

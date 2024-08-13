@@ -7,16 +7,37 @@ use PHPUnit\Framework\TestCase;
 
 class RestaurantTest extends TestCase
 {
-    public function provideFirstName(): \Generator
+    // public function provideFirstName(): \Generator
+    // {
+    //     yield ['The Best'];
+    //     yield ['Le Cornu'];
+    // }
+    // /** @dataProvider provideFirstName */
+    // public function testFirstNameSetter(string $name): void
+    // {
+    //     $restaurant = new Restaurant;
+    //     $restaurant->setName($name);
+    //     $this->assertSame($name, $restaurant->getName());
+    // }
+
+
+    public function provideTestDescriptionRestos(): \Generator
     {
-        yield ['The Best'];
-        yield ['Le Cornu'];
+        yield ["Le meilleuir des restos"];
+        yield ["Manger pour pas cher"];
     }
-    /** @dataProvider provideFirstName */
-    public function testFirstNameSetter(string $name): void
+    /** @dataProvider provideTestDescriptionRestos */
+    public function testDescriptionRestos(string $description): void
     {
         $restaurant = new Restaurant;
-        $restaurant->setName($name);
-        $this->assertSame($name, $restaurant->getName());
+        $restaurant->setDescription($description);
+        $this->assertSame($description, $restaurant->getDescription());
     }
+
+    // public function testAnException(): void
+    // {
+    //     $this->expectException(\TypeError::class);
+    //     $restaurant = new Restaurant();
+    //     $restaurant->setDescription(10);
+    // }
 }
