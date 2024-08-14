@@ -74,14 +74,6 @@ class BookingTest extends TestCase
         $booking->setAllergy($allergy);
         $this->assertSame($allergy, $booking->getAllergy());
     }
-
-
-    // public function testAnException(): void
-    // {
-    //     $this->expectException(\TypeError::class);
-    //     $booking = new Booking();
-    //     $booking->setPrice("10");
-    // }
 }
 
 

@@ -7,17 +7,17 @@ use PHPUnit\Framework\TestCase;
 
 class PictureTest extends TestCase
 {
-    // public function provideTestTiltePicture(): \Generator
-    // {
-    //     yield ["Title Picture"];
-    // }
-    // /** @dataProvider provideTestTiltePicture */
-    // public function testPictureTitle(string $title): void
-    // {
-    //     $picture = new Picture;
-    //     $picture->setTitle($title);
-    //     $this->assertSame($title, $picture->getTitle());
-    // }
+    public function provideTestTiltePicture(): \Generator
+    {
+        yield ["Title Picture"];
+    }
+    /** @dataProvider provideTestTiltePicture */
+    public function testPictureTitle(string $title): void
+    {
+        $picture = new Picture;
+        $picture->setTitle($title);
+        $this->assertSame($title, $picture->getTitle());
+    }
 
     public function providePictureSlug(): \Generator
     {
@@ -33,10 +33,10 @@ class PictureTest extends TestCase
         $this->assertSame($slug, $picture->getSlug());
     }
 
-    // public function testAnException(): void
-    // {
-    //     $this->expectException(\TypeError::class);
-    //     $picture = new Picture();
-    //     $picture->setSlug(10);
-    // }
+    public function testAnException(): void
+    {
+        $this->expectException(\TypeError::class);
+        $picture = new Picture();
+        $picture->setSlug(10);
+    }
 }

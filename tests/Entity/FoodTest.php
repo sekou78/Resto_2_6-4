@@ -47,10 +47,10 @@ class FoodTest extends TestCase
     }
 
 
-    // public function testAnException(): void
-    // {
-    //     $this->expectException(\TypeError::class);
-    //     $food = new Food();
-    //     $food->setPrice("10");
-    // }
+    public function testAnException(): void
+    {
+        $this->expectException(\TypeError::class);
+        $food = new Food();
+        $food->setPrice("10");
+    }
 }

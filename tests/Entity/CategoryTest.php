@@ -33,11 +33,4 @@ class CategoryTest extends TestCase
         $this->assertSame($title, $category->getTitle());
     }
 
-
-    // public function testAnException(): void
-    // {
-    //     $this->expectException(\TypeError::class);
-    //     $category = new Category();
-    //     $category->setPrice("10");
-    // }
 }

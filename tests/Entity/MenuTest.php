@@ -20,10 +20,10 @@ class MenuTest extends TestCase
     }
 
 
-    // public function testAnException(): void
-    // {
-    //     $this->expectException(\TypeError::class);
-    //     $restaurant = new Menu();
-    //     $restaurant->setPrice("10");
-    // }
+    public function testAnException(): void
+    {
+        $this->expectException(\TypeError::class);
+        $restaurant = new Menu();
+        $restaurant->setPrice("10");
+    }
 }

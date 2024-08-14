@@ -34,10 +34,10 @@ class RestaurantTest extends TestCase
         $this->assertSame($description, $restaurant->getDescription());
     }
 
-    // public function testAnException(): void
-    // {
-    //     $this->expectException(\TypeError::class);
-    //     $restaurant = new Restaurant();
-    //     $restaurant->setDescription(10);
-    // }
+    public function testAnException(): void
+    {
+        $this->expectException(\TypeError::class);
+        $restaurant = new Restaurant();
+        $restaurant->setDescription(10);
+    }
 }
