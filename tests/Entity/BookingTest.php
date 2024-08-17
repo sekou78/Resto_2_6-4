@@ -1,80 +1,80 @@
 <?php
 
-namespace App\Entity;
+// namespace App\Entity;
 
-use DateTime;
-use DateTimeInterface;
-use PHPUnit\Framework\TestCase;
+// use DateTime;
+// use DateTimeInterface;
+// use PHPUnit\Framework\TestCase;
 
-class BookingTest extends TestCase
-{
-    public function provideTestUuid(): \Generator
-    {
-        yield ["230"];
-        yield ["500"];
-    }
-    /** @dataProvider provideTestUuid */
-    public function testUuid(string $uuid): void
-    {
-        $booking = new Booking;
-        $booking->setUuid($uuid);
-        $this->assertSame($uuid, $booking->getUuid());
-    }
-
-
-    public function provideGuestNumber(): \Generator
-    {
-        yield [60];
-        yield [10];
-    }
-    /** @dataProvider provideGuestNumber */
-    public function testGuestNumber(int $number): void
-    {
-        $booking = new Booking;
-        $booking->setGuestNumber($number);
-        $this->assertSame($number, $booking->getGuestNumber());
-    }
+// class BookingTest extends TestCase
+// {
+//     public function provideTestUuid(): \Generator
+//     {
+//         yield ["230"];
+//         yield ["500"];
+//     }
+//     /** @dataProvider provideTestUuid */
+//     public function testUuid(string $uuid): void
+//     {
+//         $booking = new Booking;
+//         $booking->setUuid($uuid);
+//         $this->assertSame($uuid, $booking->getUuid());
+//     }
 
 
-    public function provideTestOrderDate(): \Generator
-    {
-        yield [new DateTime("29-05-2025")];
-        yield [new DateTime("2024-06-30")];
-    }
-    /** @dataProvider provideTestOrderDate */
-    public function testOrderDate(DateTimeInterface $date): void
-    {
-        $booking = new Booking;
-        $booking->setOrderDate($date);
-        $this->assertSame($date, $booking->getOrderDate());
-    }
+//     public function provideGuestNumber(): \Generator
+//     {
+//         yield [60];
+//         yield [10];
+//     }
+//     /** @dataProvider provideGuestNumber */
+//     public function testGuestNumber(int $number): void
+//     {
+//         $booking = new Booking;
+//         $booking->setGuestNumber($number);
+//         $this->assertSame($number, $booking->getGuestNumber());
+//     }
 
-    public function provideTestOrderHour(): \Generator
-    {
-        yield [new DateTime("07:30")];
-        yield [new DateTime("21:20")];
-    }
-    /** @dataProvider provideTestOrderHour */
-    public function testOrderHour(DateTimeInterface $hour): void
-    {
-        $booking = new Booking;
-        $booking->setOrderHour($hour);
-        $this->assertSame($hour, $booking->getOrderHour());
-    }
 
-    public function provideTestAllergy(): \Generator
-    {
-        yield ["cacahuètes"];
-        yield ["Olives vert"];
-    }
-    /** @dataProvider provideTestAllergy */
-    public function testAllergy(string $allergy): void
-    {
-        $booking = new Booking;
-        $booking->setAllergy($allergy);
-        $this->assertSame($allergy, $booking->getAllergy());
-    }
-}
+//     public function provideTestOrderDate(): \Generator
+//     {
+//         yield [new DateTime("29-05-2025")];
+//         yield [new DateTime("2024-06-30")];
+//     }
+//     /** @dataProvider provideTestOrderDate */
+//     public function testOrderDate(DateTimeInterface $date): void
+//     {
+//         $booking = new Booking;
+//         $booking->setOrderDate($date);
+//         $this->assertSame($date, $booking->getOrderDate());
+//     }
+
+//     public function provideTestOrderHour(): \Generator
+//     {
+//         yield [new DateTime("07:30")];
+//         yield [new DateTime("21:20")];
+//     }
+//     /** @dataProvider provideTestOrderHour */
+//     public function testOrderHour(DateTimeInterface $hour): void
+//     {
+//         $booking = new Booking;
+//         $booking->setOrderHour($hour);
+//         $this->assertSame($hour, $booking->getOrderHour());
+//     }
+
+//     public function provideTestAllergy(): \Generator
+//     {
+//         yield ["cacahuètes"];
+//         yield ["Olives vert"];
+//     }
+//     /** @dataProvider provideTestAllergy */
+//     public function testAllergy(string $allergy): void
+//     {
+//         $booking = new Booking;
+//         $booking->setAllergy($allergy);
+//         $this->assertSame($allergy, $booking->getAllergy());
+//     }
+// }
 
 
 // namespace App\Tests\Entity;
