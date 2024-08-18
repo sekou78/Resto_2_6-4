@@ -22,6 +22,7 @@ class RestaurantFixtures extends Fixture
                 ->setCreatedAt(new DateTimeImmutable());
 
             $manager->persist($restaurant);
+            $this->addReference("restaurant$i", $restaurant);
         }
 
         $manager->flush();

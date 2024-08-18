@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Booking;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class BookingFixtures extends Fixture
+class BookingFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -18,11 +19,17 @@ class BookingFixtures extends Fixture
                 ->setOrderDate(new DateTimeImmutable())
                 ->setOrderHour(new DateTimeImmutable())
                 ->setAllergy("Cacahuètes $i")
+                ->setClient($this->getReference("user" . random_int(1,10)))
                 ->setCreatedAt(new DateTimeImmutable());
 
             $manager->persist($booking);
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [UserFixtures::class];
     }
 }

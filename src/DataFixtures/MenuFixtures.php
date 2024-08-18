@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Menu;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class MenuFixtures extends Fixture
+class MenuFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -17,11 +18,17 @@ class MenuFixtures extends Fixture
                 ->setTitle("Mon titre Menu $i")
                 ->setDescription("Mon description Menu $i")
                 ->setPrice(random_int(5,20))
+                ->setRestaurant($this->getReference("restaurant" . random_int(1,10)))
                 ->setCreatedAt(new DateTimeImmutable());
 
             $manager->persist($menu);
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [RestaurantFixtures::class];
     }
 }
