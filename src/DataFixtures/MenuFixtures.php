@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
 use App\Entity\Menu;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -29,6 +30,8 @@ class MenuFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [RestaurantFixtures::class];
+        return [RestaurantFixtures::class,
+                CategoryFixtures::class,
+            ];
     }
 }

@@ -23,6 +23,7 @@ class UserFixtures extends Fixture
                 ->setLastname("Lastname1 $i")
                 ->setGuestNumber(random_int(0, 10))
                 ->setEmail("Email.$i@bibi.fr")
+                ->setAllergy("gluten $i")
                 ->setCreatedAt(new DateTimeImmutable());
 
             $user->setPassword($this->passwordHashed->hashPassword($user, "password$i"));

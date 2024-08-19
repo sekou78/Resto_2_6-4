@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Restaurant;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class RestaurantFixtures extends Fixture
+class RestaurantFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -19,6 +20,7 @@ class RestaurantFixtures extends Fixture
                 ->setAmOpeningTime(["06:30"])
                 ->setPmOpeningTime(["21:30"])
                 ->setMaxGuest(random_int(30,80))
+                ->setOwner($this->getReference("user$i"))
                 ->setCreatedAt(new DateTimeImmutable());
 
             $manager->persist($restaurant);
@@ -26,5 +28,10 @@ class RestaurantFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [UserFixtures::class];
     }
 }
