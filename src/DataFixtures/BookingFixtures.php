@@ -7,9 +7,12 @@ use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker;
 
 class BookingFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const BOOKING_NB_TUPLES = 10;
+
     private function getRandomDate(): DateTimeImmutable
     {
         // Génère une date aléatoire entre 30 jours dans le passé et aujourd'hui
@@ -33,15 +36,17 @@ class BookingFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <=10; $i++) {
+        $faker = Faker\Factory::create("fr_FR");
+
+        for ($i = 1; $i <= self::BOOKING_NB_TUPLES; $i++) {
             $booking = (new Booking())
-                ->setUuid(random_int(150,850))
-                ->setGuestNumber(random_int(20,80))
+                ->setUuid($faker->uuid())
+                ->setGuestNumber($faker->numberBetween(30, 80))
                 ->setOrderDate($this->getRandomDate())
                 ->setOrderHour($this->getRandomHour())
-                ->setAllergy("Cacahuètes $i")
-                ->setRestaurant($this->getReference("restaurant" . random_int(1,10)))
-                ->setClient($this->getReference("user" . random_int(1,10)))
+                ->setAllergy($faker->words(1, true))
+                ->setRestaurant($this->getReference(RestaurantFixtures::RESTAURANT_REFERENCE . random_int(1,10)))
+                ->setClient($this->getReference(UserFixtures::USER_REFERENCE . random_int(1,10)))
                 ->setCreatedAt(new DateTimeImmutable());
 
             $manager->persist($booking);

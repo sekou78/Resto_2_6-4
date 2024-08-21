@@ -6,17 +6,21 @@ use App\Entity\Category;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker;
 
 class CategoryFixtures extends Fixture
 {
+    public const CATEGORY_NB_TUPLES = 10;
     public const CATEGORY_REFERENCE = 'category';
     
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <=10; $i++) {
+        $faker = Faker\Factory::create("fr_FR");
+
+        for ($i = 1; $i <= self::CATEGORY_NB_TUPLES; $i++) {
             $category = (new Category())
-                ->setUuid(random_int(150,850))
-                ->setTitle("Mon titre Category $i")
+                ->setUuid($faker->uuid())
+                ->setTitle($faker->words(3, true))
                 ->setCreatedAt(new DateTimeImmutable());
 
             // Enregistrer une référence pour pouvoir y accéder dans MenuFixtures

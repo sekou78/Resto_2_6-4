@@ -7,17 +7,22 @@ use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Faker;
 
 class FoodFixtures extends Fixture implements DependentFixtureInterface
 {
+    public const FOOD_NB_TUPLES = 10;
+
     public function load(ObjectManager $manager): void
     {
-        for ($i = 1; $i <=10; $i++) {
+        $faker = Faker\Factory::create("fr_FR");
+
+        for ($i = 1; $i <= self::FOOD_NB_TUPLES; $i++) {
             $food = (new Food())
-                ->setUuid(random_int(150,850))
-                ->setTitle("Mon titre Food $i")
-                ->setDescription("Mon description Food $i")
-                ->setPrice(random_int(7,18))
+                ->setUuid($faker->uuid())
+                ->setTitle($faker->words(3, true))
+                ->setDescription($faker->text())
+                ->setPrice($faker->numberBetween(7, 15))
                 ->setCreatedAt(new DateTimeImmutable());
 
             // Associer des catégories au menu
