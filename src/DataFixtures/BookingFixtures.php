@@ -42,8 +42,10 @@ class BookingFixtures extends Fixture implements DependentFixtureInterface
             $booking = (new Booking())
                 ->setUuid($faker->uuid())
                 ->setGuestNumber($faker->numberBetween(30, 80))
-                ->setOrderDate($this->getRandomDate())
-                ->setOrderHour($this->getRandomHour())
+                // ->setOrderDate($this->getRandomDate())
+                ->setOrderDate($faker->dateTimeBetween('now', '+1 year')) // Date de réservation dans les 12 mois à venir
+                // ->setOrderHour($this->getRandomHour())
+                ->setOrderHour($faker->dateTimeBetween('18:00:00', '23:00:00')) // Heure de réservation entre 18h et 23h
                 ->setAllergy($faker->words(1, true))
                 ->setRestaurant($this->getReference(RestaurantFixtures::RESTAURANT_REFERENCE . random_int(1,10)))
                 ->setClient($this->getReference(UserFixtures::USER_REFERENCE . random_int(1,10)))
