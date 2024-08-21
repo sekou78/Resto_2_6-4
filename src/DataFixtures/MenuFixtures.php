@@ -30,10 +30,10 @@ class MenuFixtures extends Fixture implements DependentFixtureInterface
 
             // Associer des catégories au menu
             // Ici, on associe 1 catégories aléatoires à chaque menu pour l'exemple
-            for ($j = 1; $j <= 1; $j++) {
+            // for ($j = 1; $j <= 1; $j++) {
                 $category = $this->getReference(CategoryFixtures::CATEGORY_REFERENCE . random_int(1, 10));
                 $menu->addCategory($category);
-            }
+            // }
 
             $manager->persist($menu);
         }

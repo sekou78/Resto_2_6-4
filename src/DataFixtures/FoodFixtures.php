@@ -27,10 +27,10 @@ class FoodFixtures extends Fixture implements DependentFixtureInterface
 
             // Associer des catégories au menu
             // Ici, on associe 1 catégories aléatoires à chaque menu pour l'exemple
-            for ($s = 1; $s <= 1; $s++) {
+            // for ($s = 1; $s <= 1; $s++) {
                 $category = $this->getReference(CategoryFixtures::CATEGORY_REFERENCE . random_int(1,10));
                 $food->addCategory($category);
-            }
+            // }
 
             $manager->persist($food);
         }
