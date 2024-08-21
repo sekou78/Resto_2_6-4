@@ -9,6 +9,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class CategoryFixtures extends Fixture
 {
+    public const CATEGORY_REFERENCE = 'category';
+    
     public function load(ObjectManager $manager): void
     {
         for ($i = 1; $i <=10; $i++) {
@@ -16,6 +18,9 @@ class CategoryFixtures extends Fixture
                 ->setUuid(random_int(150,850))
                 ->setTitle("Mon titre Category $i")
                 ->setCreatedAt(new DateTimeImmutable());
+
+            // Enregistrer une référence pour pouvoir y accéder dans MenuFixtures
+            $this->addReference(self::CATEGORY_REFERENCE . $i, $category);
 
             $manager->persist($category);
         }
